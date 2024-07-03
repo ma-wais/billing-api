@@ -1,36 +1,72 @@
 import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
-// Schema for individual sale items
 const SalesItemSchema = new Schema({
-    name: { type: String, required: true },
-    code: { type: String, required: true },
-    unit: { type: String, required: true },
-    salePrice: { type: Number, required: true },
-    quantity: { type: Number, required: true },
+    name: { type: String},
+    code: { type: String},
+    unit: { type: String},
+    salePrice: { type: Number},
+    quantity: { type: Number},
     discount: { type: Number, default: 0 },
-    stock: { type: Number, required: true },
-    quantityPerPack: { type: Number, required: true }
+    discountAmount: { type: Number, default: 0 },
+    stock: { type: Number},
+    quantityPerPack: { type: Number},
+    value: { type: Number},
+    pricePercentage: { type: Number, default: 0 },
 });
 
 const SaleSchema = new Schema({
     items: [SalesItemSchema],
-    totalAmount: { type: Number, required: true },
+    totalAmount: { type: Number,},
     discountPercent: { type: Number, default: 0 },
     discountPrice: { type: Number, default: 0 },
-    netPrice: { type: Number, required: true },
+    netPrice: { type: Number, },
     specialDiscountReceived: { type: Number, default: 0 },
     change: { type: Number, default: 0 },
-    totalItems: { type: Number, required: true },
-    user: { type: String, required: true },
+    totalItems: { type: Number, },
+    user: { type: String, },
+    doctorName: { type: String,},
     company: String,
-    doctorName: { type: String, required: true },
     customerPhone: String,
-    customerName: { type: String, required: true },
+    customerName: { type: String},
     date: { type: Date, default: Date.now },
-    invoiceRef: { type: String, required: true }
+    invoiceRef: { type: String}
 });
 
-export const SalesItem = mongoose.model('SalesItem', SalesItemSchema);
+const SalesReturnItemSchema = new Schema({
+    name: { type: String},
+    code: { type: String},
+    unit: { type: String},
+    salePrice: { type: Number},
+    quantity: { type: Number},
+    discount: { type: Number, default: 0 },
+    discountAmount: { type: Number, default: 0 },
+    stock: { type: Number},
+    quantityPerPack: { type: Number},
+    value: { type: Number},
+    pricePercentage: { type: Number, default: 0 },
+});
+
+const SaleReturnSchema = new Schema({
+    items: [SalesItemSchema],
+    totalAmount: { type: Number,},
+    discountPercent: { type: Number, default: 0 },
+    discountPrice: { type: Number, default: 0 },
+    netPrice: { type: Number, },
+    specialDiscountReceived: { type: Number, default: 0 },
+    change: { type: Number, default: 0 },
+    totalItems: { type: Number, },
+    user: { type: String, },
+    doctorName: { type: String,},
+    company: String,
+    customerPhone: String,
+    customerName: { type: String},
+    date: { type: Date, default: Date.now },
+    invoiceRef: { type: String}
+});
+
+// export const SalesItem = mongoose.model('SalesItem', SalesItemSchema);
 export const Sale = mongoose.model('Sale', SaleSchema);
+// export const SalesReturnItem = mongoose.model('SalesReturnItem', SalesReturnItemSchema);
+export const SaleReturn = mongoose.model('SaleReturn', SaleReturnSchema);
 
