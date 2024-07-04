@@ -26,7 +26,7 @@ export const getPurchaseAdds = async (req, res) => {
 
     let query = {};
     if (item) {
-      query.item = item;
+      query['purchases.item'] = item;
     }
     if (startDate && endDate) {
       query.dateOfPurchase = {
@@ -42,7 +42,7 @@ export const getPurchaseAdds = async (req, res) => {
       const targetDate = new Date(today);
       targetDate.setDate(today.getDate() + parseInt(daysToExpire));
 
-      query.expiryDate = {
+      query['purchases.expiryDate'] = {
         $gte: today,
         $lte: targetDate
       };
@@ -169,14 +169,14 @@ export const createSales = async (req, res) => {
     const savedSale = await newSale.save();
 
     for (const item of items) {
-      const { code, quantity } = item;
-      const addingItem = await AddingItem.findOne({ itemCode: code });
+      const { code, quantity, name } = item;
+      const addingItem = await AddingItem.findOne({ itemName: name });
       if (!addingItem) {
-        throw new Error(`Item with code ${code} not found`);
+        throw new Error(`Item with code not found`);
       }
 
       if (addingItem.stock < quantity) {
-        throw new Error(`Insufficient stock for item ${code}`);
+        throw new Error(`Insufficient stock for item`);
       }
       addingItem.stock -= quantity;
       await addingItem.save();
@@ -190,7 +190,6 @@ export const createSales = async (req, res) => {
 
 export const getSales = async (req, res) => {
   try {
-
     const { from, to, invoiceref, customername, customerphone } = req.query;
 
     let query = {};
@@ -215,7 +214,24 @@ export const getSales = async (req, res) => {
     }
 
     const sales = await Sale.find(query);
-    res.json(sales);
+    const totals = sales.reduce((acc, sale) => {
+      acc.totalSoldQty += sale.items.reduce((sum, item) => sum + item.quantity, 0);
+      acc.totalCost += sale.totalCost;
+      acc.totalSaleValue += sale.totalAmount;
+      acc.totalDiscount += sale.discountPrice;
+      acc.totalNetAmount += sale.netPrice;
+      acc.totalProfit += sale.totalProfit;
+      return acc;
+    }, {
+      totalSoldQty: 0,
+      totalCost: 0,
+      totalSaleValue: 0,
+      totalDiscount: 0,
+      totalNetAmount: 0,
+      totalProfit: 0
+    });
+
+    res.json({ sales, totals });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -286,8 +302,6 @@ export const getSaleReturn = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-// delete sale
 
 export const deleteSale = async (req, res) => {
   try {

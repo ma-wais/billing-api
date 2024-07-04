@@ -143,7 +143,6 @@ export const updateItemFormula = async (req, res) => {
 
 export const getStockAdjustments = async (req, res) => {
   const { id } = req.params;
-
   try {
     const stockAdjustments = await StockAdjustment.find({ itemId: id }).sort({ adjustedAt: -1 });
     res.json(stockAdjustments);
@@ -151,3 +150,30 @@ export const getStockAdjustments = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 }
+
+// stick adjustments by date
+export const getStockAdjustmentsByDate = async (req, res) => {
+  const { from, to } = req.query;
+
+  let query = {};
+  if (from) {
+    query.adjustedAt = {
+      ...query.adjustedAt,
+      $gte: new Date(from),
+    };
+  }
+
+  if (to) {
+    query.adjustedAt = {
+      ...query.adjustedAt,
+      $lte: new Date(to),
+    };
+  }
+
+  try {
+    const stockAdjustments = await StockAdjustment.find(query).populate('itemId', 'itemName unit retailPrice');
+    res.json(stockAdjustments);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

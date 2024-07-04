@@ -13,6 +13,8 @@ const SalesItemSchema = new Schema({
     quantityPerPack: { type: Number},
     value: { type: Number},
     pricePercentage: { type: Number, default: 0 },
+    cost: { type: Number, default: 0 },
+    profit: { type: Number, default: 0 },
 });
 
 const SaleSchema = new Schema({
@@ -30,7 +32,9 @@ const SaleSchema = new Schema({
     customerPhone: String,
     customerName: { type: String},
     date: { type: Date, default: Date.now },
-    invoiceRef: { type: String}
+    invoiceRef: { type: String},
+    totalCost: { type: Number, default: 0 },
+    totalProfit: { type: Number, default: 0 }
 });
 
 const SalesReturnItemSchema = new Schema({
@@ -48,7 +52,7 @@ const SalesReturnItemSchema = new Schema({
 });
 
 const SaleReturnSchema = new Schema({
-    items: [SalesItemSchema],
+    items: [SalesReturnItemSchema],
     totalAmount: { type: Number,},
     discountPercent: { type: Number, default: 0 },
     discountPrice: { type: Number, default: 0 },
