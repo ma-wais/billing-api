@@ -20,7 +20,9 @@ config({
 });
 
 const port = process.env.PORT || 4000;
-connectDB("mongodb://127.0.0.1:27017/billing");
+const uri = process.env.DATABASE_URL || "mongodb://127.0.0.1:27017/billing";
+
+connectDB(uri); 
 
 const app = express();
 
@@ -46,4 +48,4 @@ app.use('/api/v1/purchase', purchaseRoutes);
 app.use('/api/v1/formula', formulaRoutes);
 
 
-app.listen(port, () => console.log("Server running on port 4000"));
+app.listen(port, () => console.log(`Server running on port ${port}`));
