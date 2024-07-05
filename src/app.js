@@ -16,7 +16,7 @@ import itemMapSupplierRoutes from './routes/itemMapSupplierRoutes.js';
 import purchaseRoutes from './routes/purchaseRoutes.js';
 import formulaRoutes from './routes/formulaRoutes.js';
 
-config({
+config({ 
     path: "./.env",
 });
 

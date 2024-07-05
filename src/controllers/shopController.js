@@ -11,11 +11,7 @@ export const getShops = async (req, res) => {
 
 export const createShop = async (req, res) => {
   const { shopName, owner, address, phoneNumber } = req.body;
-  const image = req.file?.path;
-
-  if (!image) {
-    return res.status(400).json({ message: 'Image upload failed' });
-  }
+  const image = req.file?.path || "";
 
   const newShop = new Shop({
     shopName,
