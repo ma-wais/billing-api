@@ -4,6 +4,7 @@ import morgan from "morgan";
 import { connectDB } from "./utils/server.js";
 import cors from "cors";
 import bodyParser from "body-parser";
+
 import cityRoutes from "./routes/cityRoutes.js";
 import shopRoutes from "./routes/shopRoutes.js"; 
 import companyRoutes from "./routes/companyRoutes.js";
