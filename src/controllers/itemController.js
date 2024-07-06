@@ -151,18 +151,19 @@ export const getStockAdjustments = async (req, res) => {
   }
 }
 
-// stick adjustments by date
 export const getStockAdjustmentsByDate = async (req, res) => {
-  const { from, to } = req.query;
+  const { from, to, itemId } = req.query;
 
   let query = {};
+  if (itemId) {
+    query.itemId = itemId;
+  }
   if (from) {
     query.adjustedAt = {
       ...query.adjustedAt,
       $gte: new Date(from),
     };
   }
-
   if (to) {
     query.adjustedAt = {
       ...query.adjustedAt,
@@ -171,8 +172,27 @@ export const getStockAdjustmentsByDate = async (req, res) => {
   }
 
   try {
-    const stockAdjustments = await StockAdjustment.find(query).populate('itemId', 'itemName unit retailPrice');
-    res.json(stockAdjustments);
+    const stockAdjustments = await StockAdjustment.find(query)
+      .populate('itemId', 'itemName unit stock')
+      .sort('adjustedAt');
+
+    let balanceQty = 0;
+    const formattedAdjustments = stockAdjustments.map(adjustment => {
+      const qtyIn = adjustment.adjustmentType === 'increase' ? adjustment.adjustment : 0;
+      const qtyOut = adjustment.adjustmentType === 'decrease' ? adjustment.adjustment : 0;
+      balanceQty += qtyIn - qtyOut;
+
+      return {
+        date: adjustment.adjustedAt,
+        type: adjustment.adjustmentType,
+        narration: `Stock ${adjustment.adjustmentType}d`,
+        qtyIn,
+        qtyOut,
+        balanceQty
+      };
+    });
+
+    res.json(formattedAdjustments);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

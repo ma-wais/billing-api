@@ -15,13 +15,15 @@ import addingItemRoutes from './routes/addingItemRoutes.js';
 import itemMapSupplierRoutes from './routes/itemMapSupplierRoutes.js';
 import purchaseRoutes from './routes/purchaseRoutes.js';
 import formulaRoutes from './routes/formulaRoutes.js';
+import accountAndCash from './routes/accountAndVoucher.js';
 
-config({ 
+config({
     path: "./.env",
 });
 
 const port = process.env.PORT || 4000;
 const uri = process.env.DATABASE_URL || "mongodb://127.0.0.1:27017/billing";
+// const uri = "mongodb://127.0.0.1:27017/billing";
 
 connectDB(uri); 
 
@@ -47,6 +49,7 @@ app.use('/api/v1/items', addingItemRoutes);
 app.use('/api/v1/item-map-suppliers', itemMapSupplierRoutes);
 app.use('/api/v1/purchase', purchaseRoutes);
 app.use('/api/v1/formula', formulaRoutes);
+app.use('/api/v1/accounts', accountAndCash);
 
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
