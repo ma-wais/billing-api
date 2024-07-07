@@ -61,6 +61,7 @@ const PurchaseReturnSchema = new Schema({
   dateOfPurchase: { type: Date, default: Date.now },
   billNumber: { type: String },
   paymentMode: { type: String },
+  remarks: { type: String },
   purchases: [
     {
       item: { type: String },

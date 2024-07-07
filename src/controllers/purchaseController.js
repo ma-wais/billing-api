@@ -83,7 +83,7 @@ export const createPurchaseLooseAdd = async (req, res) => {
   }
 };
 export const createPurchaseAdd = async (req, res) => {
-  const { supplier, dateOfPurchase, billNumber, paymentMode, purchases, totalItems, billAmount, discountPercentage, discountAmount, advanceTaxAmount, netAmount } = req.body;
+  const { supplier, dateOfPurchase, billNumber, paymentMode, remarks, purchases, totalItems, billAmount, discountPercentage, discountAmount, advanceTaxAmount, netAmount } = req.body;
 
   try {
     const newPurchaseAdd = new PurchaseAdd({
@@ -91,6 +91,7 @@ export const createPurchaseAdd = async (req, res) => {
       dateOfPurchase,
       billNumber,
       paymentMode,
+      remarks,
       purchases,
       totalItems,
       billAmount,
@@ -102,7 +103,6 @@ export const createPurchaseAdd = async (req, res) => {
 
     const savedPurchaseAdd = await newPurchaseAdd.save();
 
-    // Update stock for each purchase item
     for (const purchase of purchases) {
       const addingItem = await AddingItem.findOne({ itemName: purchase.item });
       if (!addingItem) {
