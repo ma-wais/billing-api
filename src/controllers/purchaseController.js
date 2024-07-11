@@ -82,6 +82,56 @@ export const createPurchaseLooseAdd = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+export const getSales = async (req, res) => {
+  try {
+    const { from, to, invoiceref, customername, customerphone } = req.query;
+
+    let query = {};
+
+    if (from && to) {
+      query.date = {
+        $gte: new Date(from),
+        $lte: new Date(to)
+      };
+    }
+
+    if (invoiceref) {
+      query.invoiceRef = invoiceref;
+    }
+
+    if (customername) {
+      query.customerName = customername;
+    }
+
+    if (customerphone) {
+      query.customerPhone = customerphone;
+    }
+
+    const sales = await Sale.find(query);
+    const totals = sales.reduce((acc, sale) => {
+      acc.totalSoldQty += sale.items.reduce((sum, item) => sum + item.quantity, 0);
+      acc.totalCost += sale.totalCost;
+      acc.totalSaleValue += sale.totalAmount;
+      acc.totalDiscount += sale.discountPrice;
+      acc.totalNetAmount += sale.netPrice;
+      acc.totalProfit += sale.totalProfit;
+      return acc;
+    }, {
+      totalSoldQty: 0,
+      totalCost: 0,
+      totalSaleValue: 0,
+      totalDiscount: 0,
+      totalNetAmount: 0,
+      totalProfit: 0
+    });
+
+    res.json({ sales, totals });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const createPurchaseAdd = async (req, res) => {
   const { supplier, dateOfPurchase, billNumber, paymentMode, remarks, purchases, totalItems, billAmount, discountPercentage, discountAmount, advanceTaxAmount, netAmount } = req.body;
 
@@ -153,7 +203,6 @@ export const createPurchaseReturn = async (req, res) => {
     console.log(error);
   }
 };
-
 export const createSales = async (req, res) => {
   const {
     items, totalAmount, discountPercent, discountPrice, netPrice, specialDiscountReceived,
@@ -185,55 +234,6 @@ export const createSales = async (req, res) => {
     res.status(201).json(savedSale);
   } catch (error) {
     res.status(400).json({ message: error.message });
-  }
-};
-
-export const getSales = async (req, res) => {
-  try {
-    const { from, to, invoiceref, customername, customerphone } = req.query;
-
-    let query = {};
-
-    if (from && to) {
-      query.date = {
-        $gte: new Date(from),
-        $lte: new Date(to)
-      };
-    }
-
-    if (invoiceref) {
-      query.invoiceRef = invoiceref;
-    }
-
-    if (customername) {
-      query.customerName = customername;
-    }
-
-    if (customerphone) {
-      query.customerPhone = customerphone;
-    }
-
-    const sales = await Sale.find(query);
-    const totals = sales.reduce((acc, sale) => {
-      acc.totalSoldQty += sale.items.reduce((sum, item) => sum + item.quantity, 0);
-      acc.totalCost += sale.totalCost;
-      acc.totalSaleValue += sale.totalAmount;
-      acc.totalDiscount += sale.discountPrice;
-      acc.totalNetAmount += sale.netPrice;
-      acc.totalProfit += sale.totalProfit;
-      return acc;
-    }, {
-      totalSoldQty: 0,
-      totalCost: 0,
-      totalSaleValue: 0,
-      totalDiscount: 0,
-      totalNetAmount: 0,
-      totalProfit: 0
-    });
-
-    res.json({ sales, totals });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
 };
 

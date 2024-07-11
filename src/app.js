@@ -16,6 +16,7 @@ import itemMapSupplierRoutes from './routes/itemMapSupplierRoutes.js';
 import purchaseRoutes from './routes/purchaseRoutes.js';
 import formulaRoutes from './routes/formulaRoutes.js';
 import accountAndCash from './routes/accountAndVoucher.js';
+import Dashboard from './routes/dashboard.js'
 
 config({
     path: "./.env",
@@ -50,6 +51,6 @@ app.use('/api/v1/item-map-suppliers', itemMapSupplierRoutes);
 app.use('/api/v1/purchase', purchaseRoutes);
 app.use('/api/v1/formula', formulaRoutes);
 app.use('/api/v1/accounts', accountAndCash);
-
+app.use('/api/v1/dashboard', Dashboard);
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
