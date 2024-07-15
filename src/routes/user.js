@@ -6,25 +6,18 @@ const router = express.Router();
 
 
 router.post(
-    '/register',  
-    [
-      check('username', 'Username is required').not().isEmpty(),
-      check('email', 'Please include a valid email').isEmail(),
-    ],
-    register
-  );
-  
-  router.post(
-    '/login',
-    [
-      check('email', 'Please include a valid email').isEmail(),
-      check('password', 'Password is required').exists()
-    ],
-    login
-  );
-  
-  router.get('/user', auth, getUser);
+  '/register',
+  [
+    check('username', 'Username is required').not().isEmpty(),
+    check('email', 'Please include a valid email').isEmail(),
+  ],
+  register
+);
 
-  router.post('/logout', auth, logout);
+router.post('/login', login);
 
-  export default router
+router.get('/user', auth, getUser);
+
+router.post('/logout', auth, logout);
+
+export default router
