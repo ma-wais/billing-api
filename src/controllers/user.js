@@ -39,15 +39,10 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { email, password } = req.body;
+  const { emailOrUsername, password } = req.body;
 
   try {
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ $or: [{ email: emailOrUsername }, { username: emailOrUsername }] });
     if (!user) {
       return res.status(400).json({ msg: 'Invalid Credentials' });
     }
@@ -74,6 +69,7 @@ export const login = async (req, res) => {
   }
 };
 
+
 export const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -85,8 +81,8 @@ export const getUser = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.cookie('token', '', { 
-    httpOnly: true, 
+  res.cookie('token', '', {
+    httpOnly: true,
     expires: new Date(0)
   });
   res.status(200).json({ message: 'Logged out successfully' });
