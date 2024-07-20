@@ -1,6 +1,5 @@
 import Company from "../models/Company.js";
 
-
 export const getCompanies = async (req, res) => {
     try {
       const companies = await Company.find();
@@ -31,3 +30,36 @@ export const getCompanies = async (req, res) => {
       res.status(400).json({ message: error.message });
     }
   };
+
+  export const getCompany = async (req, res) => {
+    try {
+      const company = await Company.findById(req.params.id);
+      res.json(company);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  }
+
+  export const updateCompany = async (req, res) => {
+    const { companyName, shortName, code, phoneNumber, email, address, status, remarks } = req.body;
+  
+    try {
+      const updatedCompany = await Company.findByIdAndUpdate(
+        req.params.id,
+        {
+          companyName,
+          shortName,
+          code,
+          phoneNumber,
+          email,
+          address,
+          status,
+          remarks
+        },
+        { new: true }
+      );
+      res.json(updatedCompany);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }

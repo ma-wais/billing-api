@@ -203,6 +203,7 @@ export const createPurchaseReturn = async (req, res) => {
     console.log(error);
   }
 };
+
 export const createSales = async (req, res) => {
   const {
     items, totalAmount, discountPercent, discountPrice, netPrice, specialDiscountReceived,

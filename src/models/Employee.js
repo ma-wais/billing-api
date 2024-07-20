@@ -12,7 +12,7 @@ const EmployeeSchema = new Schema({
   address: String,
   city: String,
   remarks: { type: String },
-  image: { type: String } // URL or path to the image
+  image: { type: String }
 });
 
 const Employee = mongoose.model('Employee', EmployeeSchema);

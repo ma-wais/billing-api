@@ -71,6 +71,20 @@ export const getDashboardStats = async (req, res) => {
   }
 };
 
+export const getSaleStats = async (req, res) => {
+  const { startDate, endDate } = req.body;
+
+  try {
+    const netSales = await getNetSales(startDate, endDate);
+    const saleReturns = await getSaleReturns(startDate, endDate);
+    const totalSales = netSales - saleReturns;
+
+    res.json({ netSales, saleReturns, totalSales });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const getNetSales = async (startDate, endDate) => {
   const result = await Sale.aggregate([
     {
