@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { getUnits, createUnit } from '../controllers/unitController.js';
+import { getUnits, createUnit, updateUnit, getUnit } from '../controllers/unitController.js';
 
 const router = Router();
 
-router.get('/', getUnits);
-router.post('/', createUnit);
+router.get('/', getUnits).post('/', createUnit);
+router.get('/:id', getUnit).put('/:id', updateUnit);
 
 export default router;

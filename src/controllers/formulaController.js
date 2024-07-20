@@ -4,7 +4,7 @@ export const getFormulas = async (req, res) => {
     try {
         const { name } = req.query;
         let query = {};
-    
+
         if (name) {
             query = { name: new RegExp(name, 'i') };
         }
@@ -27,5 +27,33 @@ export const createFormula = async (req, res) => {
         res.status(201).json(newFormula);
     } catch (error) {
         res.status(409).json({ message: error.message });
+    }
+}
+
+export const updateFormula = async (req, res) => {
+    const { name, composition } = req.body;
+    const updatedFields = {
+        name,
+        composition
+    };
+
+    try {
+        const updatedFormula = await Formula.findByIdAndUpdate(
+            req.params.id,
+            { $set: updatedFields },
+            { new: true }
+        );
+        res.status(200).json(updatedFormula);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+export const getFormula = async (req, res) => {
+    try {
+        const formula = await Formula.findById(req.params.id);
+        res.json(formula);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
     }
 }

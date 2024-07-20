@@ -25,3 +25,27 @@ export const createUnit = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+export const getUnit = async (req, res) => {
+  try {
+    const unit = await Unit.findById(req.params.id);
+    res.json(unit);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+export const updateUnit = async (req, res) => {
+  const { unitName, unitStatus, remarks } = req.body;
+
+  try {
+    const updatedUnit = await Unit.findByIdAndUpdate(
+      req.params.id,  
+      { unitName, unitStatus, remarks },
+      { new: true }
+    );
+    res.json(updatedUnit);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
