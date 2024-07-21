@@ -20,6 +20,24 @@ export const getAccounts = async (req, res) => {
     }
 };
 
+export const getAccount = async (req, res) => {
+    try {
+        const account = await Account.findById(req.params.id).populate('city');
+        res.status(200).json(account);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    } 
+};
+
+export const updateAccount = async (req, res) => {
+    try {
+        const updatedAccount = await Account.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.status(200).json(updatedAccount);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 export const createCashVoucher = async (req, res) => {
     try {
         const { date, account, amount, description, type } = req.body;
@@ -52,39 +70,54 @@ export const createCashVoucher = async (req, res) => {
 };
 
 export const getCashVouchers = async (req, res) => {
-    const { dateFrom, dateTo, account, type } = req.query;
+  const { dateFrom, dateTo, type } = req.query;
 
-    let query = {};
+  let query = {};
 
-    if (dateFrom) {
-        query.date = {
-            $gte: new Date(dateFrom),
-        };
-    }
+  if (dateFrom) {
+    query.date = {
+      $gte: new Date(dateFrom),
+    };
+  }
 
-    if (dateTo) {
-        query.date = {
-            ...query.date,
-            $lte: new Date(dateTo),
-        };
-    }
+  if (dateTo) {
+    query.date = {
+      ...query.date,
+      $lte: new Date(dateTo),
+    };
+  }
 
-    if (account) {
-        query.account = account;
-    }
+  if (type) {
+    query.type = type;
+  }
 
-    if (type) {
-        query.type = type;
-    }
+  console.log('Final Query:', JSON.stringify(query));
 
+  try {
+    const cashVouchers = await CashVoucher.find(query).populate('account', 'accountName');
+    console.log('Cash Vouchers found:', cashVouchers.length);
+    res.status(200).json(cashVouchers);
+  } catch (error) {
+    console.error('Error in getCashVouchers:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+export const deleteCashVoucher = async (req, res) => {
     try {
-        const cashVouchers = await CashVoucher.find(query).populate('account');
-        res.status(200).json(cashVouchers);
+        const deletedCashVoucher = await CashVoucher.findByIdAndDelete(req.params.id);
+        res.status(200).json(deletedCashVoucher);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
-
+export const updateCashVoucher = async (req, res) => {
+    try {
+        const updatedCashVoucher = await CashVoucher.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.status(200).json(updatedCashVoucher);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
 export const getCashReport = async (req, res) => {
     const { dateFrom, dateTo, account, type } = req.query;
 
@@ -166,7 +199,6 @@ export const getAccountBalances = async (req, res) => {
       res.status(500).json({ message: error.message });
     }
 };
-
 export const getAccountLedger = async (req, res) => {
     try {
       const { accountId, dateFrom, dateTo } = req.query;

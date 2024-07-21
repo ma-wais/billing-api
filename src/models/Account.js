@@ -17,7 +17,6 @@ const accountSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        unique: true
     },
     status: {
         type: String,
@@ -51,10 +50,11 @@ const accountSchema = new mongoose.Schema({
         default: Date.now
     }
 });
-// update account balance
+
 accountSchema.methods.updateBalance = async function (money) {
     this.balance += money
     await this.save()
 }
+
 const Account = mongoose.model('Account', accountSchema);
 export default Account

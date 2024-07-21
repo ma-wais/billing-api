@@ -20,7 +20,7 @@ const cashVoucherSchema = new mongoose.Schema({
   },
   creationDate: {
     type: Date,
-    default: Date.now()
+    default: Date.now
   }
 });
 

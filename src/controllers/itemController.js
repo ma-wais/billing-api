@@ -1,3 +1,4 @@
+import Account from '../models/Account.js';
 import AddingItem from '../models/Item.js';
 import StockAdjustment from '../models/StockAdjustment.js';
 
@@ -39,11 +40,13 @@ export const getItems = async (req, res) => {
 
 export const createItem = async (req, res) => {
   console.log(req.body);
-  const { itemCode, itemBarCode, itemName, itemType, companyName, unit, quantityInPack, retailPrice, minimumQuantity, maximumQuantity,
-     status, itemRackNumber, narcotics, costPerPc, itemFormula, remarks, stock } = req.body;
+  const {
+    itemCode, itemBarCode, itemName, itemType, companyName, unit, quantityInPack,
+    retailPrice, minimumQuantity, maximumQuantity, status, itemRackNumber, narcotics,
+    costPerPc, itemFormula, remarks, stock, supplierList
+  } = req.body;
 
   const image = req.file?.path;
-  console.log (image);
   const margin = retailPrice - costPerPc;
 
   let stockType = 'low';
@@ -57,33 +60,44 @@ export const createItem = async (req, res) => {
     }
   }
 
-  const newItem = new AddingItem({
-    itemCode,
-    itemBarCode,
-    itemName,
-    itemType,
-    companyName,
-    unit,
-    quantityInPack,
-    retailPrice,
-    margin,
-    minimumQuantity,
-    maximumQuantity,
-    status,
-    itemRackNumber,
-    narcotics,
-    costPerPc,
-    itemFormula,
-    remarks,
-    image,
-    stock,
-    stockType
-  });
-
   try {
+    const suppliers = typeof supplierList === 'string' ? JSON.parse(supplierList) : supplierList;
+
+    const supplierDocs = await Account.find({ accountName: { $in: suppliers.map(s => s.name) } });
+
+    const supplierArray = supplierDocs.map(supplier => {
+      const supplierInfo = suppliers.find(s => s.name === supplier.accountName);
+      return { account: supplier._id, remarks: supplierInfo.remarks };
+    });
+
+    const newItem = new AddingItem({
+      itemCode,
+      itemBarCode,
+      itemName,
+      itemType,
+      companyName,
+      unit,
+      quantityInPack,
+      retailPrice,
+      margin,
+      minimumQuantity,
+      maximumQuantity,
+      status,
+      itemRackNumber,
+      narcotics,
+      costPerPc,
+      itemFormula,
+      remarks,
+      image,
+      stock,
+      stockType,
+      supplier: supplierArray
+    });
+
     const savedItem = await newItem.save();
     res.status(201).json(savedItem);
   } catch (error) {
+    console.error("Error saving item:", error);
     res.status(400).json({ message: error.message });
   }
 };
@@ -91,6 +105,7 @@ export const createItem = async (req, res) => {
 export const updateItem = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
+  console.log(updates);
 
   try {
     if (updates.stock !== undefined || updates.minimumQuantity !== undefined || updates.maximumQuantity !== undefined) {
@@ -173,7 +188,7 @@ export const getStockAdjustmentsByDate = async (req, res) => {
 
   try {
     const stockAdjustments = await StockAdjustment.find(query)
-      .populate('itemId', 'itemName unit stock')
+      .populate('itemId', 'itemName unit stock retailPrice')
       .sort('adjustedAt');
 
     let balanceQty = 0;
@@ -188,7 +203,8 @@ export const getStockAdjustmentsByDate = async (req, res) => {
         narration: `Stock ${adjustment.adjustmentType}d`,
         qtyIn,
         qtyOut,
-        balanceQty
+        balanceQty,
+        item: adjustment.itemId // Include the populated item details
       };
     });
 
