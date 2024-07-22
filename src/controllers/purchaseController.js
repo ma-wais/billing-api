@@ -1,6 +1,7 @@
 import PurchaseAdd, { PurchaseAddLoose, PurchaseReturn } from '../models/purchaseModels.js';
 import AddingItem from '../models/Item.js';
 import { Sale, SaleReturn } from '../models/Sales.js';
+import CashVoucher from "../models/Voucher.js";
 
 export const getPurchaseLooseAdd = async (req, res) => {
   try {
@@ -80,6 +81,44 @@ export const createPurchaseLooseAdd = async (req, res) => {
     res.status(201).json(savedPurchaseAdd);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+export const getOpeningCash = async (req, res) => {
+  const { date } = req.query;
+  
+  try {
+    // Ensure we have a valid date
+    if (!date) {
+      return res.status(400).json({ message: "Date parameter is required" });
+    }
+
+    // Parse the date and set it to the start of the day in UTC
+    const startDate = new Date(date);
+    if (isNaN(startDate.getTime())) {
+      return res.status(400).json({ message: "Invalid date format" });
+    }
+    startDate.setUTCHours(0, 0, 0, 0);
+
+    // Find all transactions before this date
+    const previousTransactions = await CashVoucher.find({
+      date: { $lt: startDate }
+    });
+    
+    // Calculate the opening balance
+    const openingCash = previousTransactions.reduce((balance, transaction) => {
+      if (transaction.type === 'CashReceipt') {
+        return balance + transaction.amount;
+      } else if (transaction.type === 'CashPayment') {
+        return balance - transaction.amount;
+      }
+      return balance;
+    }, 0);
+
+    res.json({ openingCash });
+  } catch (error) {
+    console.error('Error in getOpeningCash:', error);
+    res.status(500).json({ message: error.message });
   }
 };
 

@@ -69,8 +69,6 @@ const SaleReturnSchema = new Schema({
     invoiceRef: { type: String}
 });
 
-// export const SalesItem = mongoose.model('SalesItem', SalesItemSchema);
 export const Sale = mongoose.model('Sale', SaleSchema);
-// export const SalesReturnItem = mongoose.model('SalesReturnItem', SalesReturnItemSchema);
 export const SaleReturn = mongoose.model('SaleReturn', SaleReturnSchema);
 
