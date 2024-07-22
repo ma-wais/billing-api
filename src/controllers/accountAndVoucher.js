@@ -102,6 +102,15 @@ export const getCashVouchers = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getCashVoucher = async (req, res) => {
+    try {
+        const cashVoucher = await CashVoucher.findById(req.params.id).populate('account', 'accountName balance');
+        res.status(200).json(cashVoucher);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 export const deleteCashVoucher = async (req, res) => {
     try {
         const deletedCashVoucher = await CashVoucher.findByIdAndDelete(req.params.id);
