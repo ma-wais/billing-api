@@ -58,6 +58,7 @@ export const getEmployee = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 }
+
 export const updateEmployee = async (req, res) => {
   try {
     const employee = await Employee.findById(req.params.id);
@@ -105,4 +106,44 @@ export const updateEmployee = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+export const loginEmployee = async (req, res) => {
+  const {name, password } = req.body;
+
+  try {
+    const employee = await Employee.findOne({ name: name });
+    if (!employee) {
+      return res.status(400).json({ msg: 'Invalid Credentials' });
+    }
+
+    if (employee.employeeCode !== password) {
+      return res.status(400).json({ msg: 'Invalid Credentials' });
+    }
+
+    res.cookie('employeeId', employee._id, { httpOnly: true, secure: false });
+
+    res.status(200).json({ msg: 'Login successful', employee });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
+export const getCurrentEmployee = async (req, res) => {
+  try {
+    const employee = await Employee.findById(req.session.employeeId);
+    if (!employee) {
+      return res.status(404).json({ msg: 'Employee not found' });
+    }
+    res.status(200).json(employee);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
+export const logoutEmployee = (req, res) => {
+  res.clearCookie('employeeId', { httpOnly: true, secure: false });
+  res.status(200).json({ msg: 'Logout successful' });
 };

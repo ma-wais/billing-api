@@ -5,6 +5,7 @@ import { connectDB } from "./utils/server.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from 'cookie-parser';
+import session from 'express-session';
 
 import cityRoutes from "./routes/cityRoutes.js";
 import shopRoutes from "./routes/shopRoutes.js"; 
@@ -52,6 +53,13 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
+app.use(session({
+  secret: 'kdawgjdajkwg8734378dasui',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}));
+
 
 app.get("/", (req, res) => {
   res.send("API Working with /api/v1");
