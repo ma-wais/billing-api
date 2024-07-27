@@ -109,7 +109,7 @@ export const updateEmployee = async (req, res) => {
 };
 
 export const loginEmployee = async (req, res) => {
-  const {name, password } = req.body;
+  const { name, password } = req.body;
 
   try {
     const employee = await Employee.findOne({ name: name });
@@ -137,6 +137,30 @@ export const getCurrentEmployee = async (req, res) => {
       return res.status(404).json({ msg: 'Employee not found' });
     }
     res.status(200).json(employee);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
+export const changeEmployeeCode = async (req, res) => {
+  const { id } = req.params;
+  const { oldEmployeeCode, newEmployeeCode } = req.body;
+
+  try {
+    const employee = await Employee.findById(id);
+    if (!employee) {
+      return res.status(404).json({ msg: 'Employee not found' });
+    }
+
+    if (employee.employeeCode !== oldEmployeeCode) {
+      return res.status(400).json({ msg: 'Old employee code is incorrect' });
+    }
+
+    employee.employeeCode = newEmployeeCode;
+    await employee.save();
+
+    res.status(200).json({ msg: 'Employee code changed successfully' });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

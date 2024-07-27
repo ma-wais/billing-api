@@ -6,7 +6,8 @@ import {
     getEmployee,
     loginEmployee,
     getCurrentEmployee,
-    logoutEmployee
+    logoutEmployee,
+    changeEmployeeCode
 } from "../controllers/employeeController.js";
 import upload from "../config/multerConfig.js";
 
@@ -27,7 +28,7 @@ router.post("/", upload.single('image'), createEmployee);
 router.post('/login', loginEmployee);
 router.get('/current', ensureAuthenticated, getCurrentEmployee);
 router.post('/logout', logoutEmployee);
-
+router.put('/code/:id', changeEmployeeCode);
 router.get('/protected-route', ensureAuthenticated, (req, res) => {
     res.status(200).json({ msg: 'You have access to this route' });
 });
