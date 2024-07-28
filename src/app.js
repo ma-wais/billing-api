@@ -33,7 +33,7 @@ connectDB(uri);
 
 const app = express();
 
-const whitelist = ['http://localhost:5173', 'https://billingdboard.onrender.com', ];
+const whitelist = ['http://localhost:5173', 'https://billingdboard.onrender.com', 'https://billingdboard-dashcoard.vercel.app' ];
 const corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
