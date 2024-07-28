@@ -12,7 +12,7 @@ export const getItems = async (req, res) => {
     }
 
     if (unit) {
-      query.unit = unit;
+      query.unit = unit.toLowerCase();
     }
 
     if (maxMargin) {

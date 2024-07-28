@@ -5,7 +5,7 @@ import { connectDB } from "./utils/server.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from 'cookie-parser';
-import session from 'express-session';
+// import session from 'express-session';
 
 import cityRoutes from "./routes/cityRoutes.js";
 import shopRoutes from "./routes/shopRoutes.js"; 
@@ -33,7 +33,7 @@ connectDB(uri);
 
 const app = express();
 
-const whitelist = ['http://localhost:5173', 'https://billingdboard.onrender.com',];
+const whitelist = ['http://localhost:5173', 'https://billingdboard.onrender.com', ];
 const corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
@@ -53,12 +53,12 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
-app.use(session({
-  secret: 'kdawgjdajkwg8734378dasui',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }
-}));
+// app.use(session({
+//   secret: 'kdawgjdajkwg8734378dasui',
+//   resave: false,
+//   saveUninitialized: true,
+//   cookie: { secure: false }
+// }));
 
 
 app.get("/", (req, res) => {

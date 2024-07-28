@@ -2,8 +2,8 @@ import express from "express";
 import { check } from "express-validator";
 import auth from '../middleware/auth.js'
 import { getUser, login, register, logout } from "../controllers/user.js";
-const router = express.Router();
 
+const router = express.Router();
 
 router.post(
   '/register',

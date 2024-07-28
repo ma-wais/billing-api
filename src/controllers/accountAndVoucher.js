@@ -70,7 +70,7 @@ export const createCashVoucher = async (req, res) => {
 };
 
 export const getCashVouchers = async (req, res) => {
-  const { dateFrom, dateTo, type } = req.query;
+  const { dateFrom, dateTo, type, account } = req.query;
 
   let query = {};
 
@@ -91,11 +91,13 @@ export const getCashVouchers = async (req, res) => {
     query.type = type;
   }
 
-  console.log('Final Query:', JSON.stringify(query));
-
   try {
-    const cashVouchers = await CashVoucher.find(query).populate('account', 'accountName');
-    console.log('Cash Vouchers found:', cashVouchers.length);
+    let cashVouchers = (await CashVoucher.find(query).populate('account', 'accountName'))
+  
+    if (account) {
+      cashVouchers = cashVouchers.filter((voucher) => voucher.account.accountName.toLowerCase() === account.toLowerCase());
+    }
+
     res.status(200).json(cashVouchers);
   } catch (error) {
     console.error('Error in getCashVouchers:', error);
