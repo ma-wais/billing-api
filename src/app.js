@@ -5,7 +5,6 @@ import { connectDB } from "./utils/server.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from 'cookie-parser';
-// import session from 'express-session';
 
 import cityRoutes from "./routes/cityRoutes.js";
 import shopRoutes from "./routes/shopRoutes.js"; 
@@ -27,7 +26,6 @@ config({
 
 const port = process.env.PORT || 4000;
 const uri = process.env.DATABASE_URL || "mongodb://127.0.0.1:27017/billing";
-// const uri = "mongodb://127.0.0.1:27017/billing";
 
 connectDB(uri); 
 
@@ -53,13 +51,6 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
-// app.use(session({
-//   secret: 'kdawgjdajkwg8734378dasui',
-//   resave: false,
-//   saveUninitialized: true,
-//   cookie: { secure: false }
-// }));
-
 
 app.get("/", (req, res) => {
   res.send("API Working with /api/v1");
