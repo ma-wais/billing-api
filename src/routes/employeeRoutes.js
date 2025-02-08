@@ -4,6 +4,7 @@ import {
     createEmployee,
     updateEmployee,
     getEmployee,
+    deleteEmployee,
     loginEmployee,
     getCurrentEmployee,
     logoutEmployee,
@@ -33,7 +34,7 @@ router.get('/protected-route', ensureAuthenticated, (req, res) => {
     res.status(200).json({ msg: 'You have access to this route' });
 });
 
-router.get("/:id", getEmployee);
+router.get("/:id", getEmployee).delete("/:id", deleteEmployee);
 router.put("/:id", upload.single('image'), updateEmployee);
 
 export default router;

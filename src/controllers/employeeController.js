@@ -65,7 +65,7 @@ export const updateEmployee = async (req, res) => {
     if (!employee) {
       return res.status(404).json({ message: "Employee not found" });
     }
-    console.log(req.body);
+
     const {
       employeeCode,
       employeeName,
@@ -85,7 +85,7 @@ export const updateEmployee = async (req, res) => {
       fatherName,
       cnic,
       gender,
-      dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : employee.dateOfBirth,
+      dateOfBirth,
       status,
       address,
       city,
@@ -108,6 +108,14 @@ export const updateEmployee = async (req, res) => {
   }
 };
 
+export const deleteEmployee = async (req, res) => {
+  try {
+    const deletedEmployee = await Employee.findByIdAndDelete(req.params.id);
+    res.json(deletedEmployee);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+}
 export const loginEmployee = async (req, res) => {
   const { name, password } = req.body;
 

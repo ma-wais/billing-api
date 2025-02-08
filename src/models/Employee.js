@@ -7,7 +7,7 @@ const EmployeeSchema = new Schema({
   fatherName: String,
   cnic: String,
   gender: String,
-  dateOfBirth: Date,
+  dateOfBirth: String,
   status: String,
   address: String,
   city: String,
