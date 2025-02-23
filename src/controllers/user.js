@@ -29,7 +29,12 @@ export const register = async (req, res) => {
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (err, token) => {
       if (err) throw err;
-      res.cookie('token', token, { httpOnly: true });
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // use secure cookies in production (HTTPS)
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // allow cross-site cookies in production
+      });
+      
       res.json({ token });
     });
   } catch (err) {
@@ -59,7 +64,12 @@ export const login = async (req, res) => {
     
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 360000 }, (err, token) => {
       if (err) throw err;
-      res.cookie('token', token, { httpOnly: true });
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      });
+      
       res.json({ token });
     });
   } catch (err) {
