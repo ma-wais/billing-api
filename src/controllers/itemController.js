@@ -39,7 +39,6 @@ export const getItems = async (req, res) => {
 };
 
 export const createItem = async (req, res) => {
-  console.log(req.body);
   const {
     itemCode, itemBarCode, itemName, itemType, companyName, unit, quantityInPack,
     retailPrice, minimumQuantity, maximumQuantity, status, itemRackNumber, narcotics,
@@ -105,7 +104,6 @@ export const createItem = async (req, res) => {
 export const updateItem = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
-  console.log(updates);
 
   try {
     if (updates.stock !== undefined || updates.minimumQuantity !== undefined || updates.maximumQuantity !== undefined) {

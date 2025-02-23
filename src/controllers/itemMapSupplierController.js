@@ -1,4 +1,5 @@
-import ItemMapSupplier from '../models/ItemMapSupplier.js';
+import ItemMapSupplier from "../models/ItemMapSupplier.js";
+import AddingItem from "../models/Item.js";
 
 export const getItemMapSuppliers = async (req, res) => {
   try {
@@ -10,15 +11,22 @@ export const getItemMapSuppliers = async (req, res) => {
 };
 
 export const createItemMapSupplier = async (req, res) => {
-  const { supplierName, item, quantity } = req.body;
-
-  const newItemMapSupplier = new ItemMapSupplier({
-    supplierName,
-    item,
-    quantity
-  });
+  const { supplier, item, quantity } = req.body;
 
   try {
+    const addingItem = await AddingItem.findById(item);
+    if (!addingItem) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+
+    await addingItem.updateStock(quantity);
+
+    const newItemMapSupplier = new ItemMapSupplier({
+      supplier,
+      item,
+      quantity,
+    });
+
     const savedItemMapSupplier = await newItemMapSupplier.save();
     res.status(201).json(savedItemMapSupplier);
   } catch (error) {
@@ -27,11 +35,11 @@ export const createItemMapSupplier = async (req, res) => {
 };
 
 export const updateMaxQuantityBySupplier = async (req, res) => {
-  const { supplierName, item, newMaxQuantity } = req.body;
+  const { supplier, item, newMaxQuantity } = req.body;
 
   try {
     const updatedItemMapSupplier = await ItemMapSupplier.findOneAndUpdate(
-      { supplierName, item },
+      { supplier, item },
       { quantity: newMaxQuantity },
       { new: true }
     );
